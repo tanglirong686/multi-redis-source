@@ -2,6 +2,7 @@ package com.multiple.data.source.database.registrar;
 
 import com.multiple.data.source.constant.EnhanceRedisConstants;
 import com.multiple.data.source.database.config.DynamicRedisTemplateFactory;
+import com.multiple.data.source.database.helper.ApplicationContextHelper;
 import com.multiple.data.source.database.helper.DynamicRedisHelper;
 import com.multiple.data.source.database.helper.RedisHelper;
 import com.multiple.data.source.database.options.DynamicRedisTemplate;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.env.AbstractEnvironment;
@@ -33,10 +35,10 @@ import java.util.Set;
  * <p>
  * RedisTemplate 的 bean 名称为 <i>nameRedisTemplate</i>，可以通过 {@link Qualifier} 根据名称注册
  * <p>
- * RedisHelper 的 bean 名称有两个： <i>name</i> 以及 <i>nameRedisHelper</i>，可以通过 {@link RedisDataSource} 注入
+ * RedisHelper 的 bean 名称有两个： <i>name</i> 以及 <i>nameRedisHelper</i>，可以通过名称注入
  *
  */
-public class RedisMultiDataSourceRegistrar implements EnvironmentAware, ImportBeanDefinitionRegistrar {
+public class RedisMultiDataSourceRegistrar implements EnvironmentAware,CommandLineRunner, ImportBeanDefinitionRegistrar {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -45,6 +47,41 @@ public class RedisMultiDataSourceRegistrar implements EnvironmentAware, ImportBe
     @Override
     public void setEnvironment(@NonNull Environment environment) {
         this.environment = environment;
+    }
+
+    @Override
+    @SuppressWarnings("rawtypes")
+    public void run(String... args) {
+        // 获取所有数据源名称（注意：只包含spring.redis.datasource下的数据源）
+        Set<String> dataSourceNames = EnvironmentUtil.loadRedisDataSourceName((AbstractEnvironment) environment);
+
+        if (dataSourceNames.size() < 1) {
+            logger.error("no multi datasource config, register multi datasource failed. please check config.");
+            return;
+        }
+
+        // 注册默认数据源的redisHelper和redisTemplate(这两个bean在自动配置类中已经注入了)
+        RedisHelper defaultRedisHelper = ApplicationContextHelper.getContext()
+                .getBean(EnhanceRedisConstants.DefaultRedisHelperName.REDIS_HELPER, RedisHelper.class);
+        RedisTemplate defaultRedisTemplate = ApplicationContextHelper.getContext()
+                .getBean(EnhanceRedisConstants.DefaultRedisTemplateName.REDIS_TEMPLATE, RedisTemplate.class);
+        RedisDataSourceRegister.registerRedisHelper(EnhanceRedisConstants.MultiSource.DEFAULT_SOURCE_HELPER, defaultRedisHelper);
+        RedisDataSourceRegister.registerRedisTemplate(EnhanceRedisConstants.MultiSource.DEFAULT_SOURCE_TEMPLATE, defaultRedisTemplate);
+
+        // 注册多数据源的RedisHelper
+        dataSourceNames.forEach(name -> {
+            String realTemplateName = name + EnhanceRedisConstants.MultiSource.REDIS_TEMPLATE;
+            String realHelperName = name + EnhanceRedisConstants.MultiSource.REDIS_HELPER;
+            // 通过数据源名称获取bean
+            RedisTemplate redisTemplate = ApplicationContextHelper.getContext().getBean(realTemplateName, RedisTemplate.class);
+            // 如果开启动态切换db则创建动态redisHelper，反之则创建静态redisHelper
+            RedisHelper redisHelper = ApplicationContextHelper.getContext().getBean(realHelperName, RedisHelper.class);
+            // 注册RedisTemplate
+            RedisDataSourceRegister.registerRedisTemplate(realTemplateName, redisTemplate);
+            // 注册RedisHelper
+            RedisDataSourceRegister.registerRedisHelper(realHelperName, redisHelper);
+        });
+
     }
 
     /**

@@ -4,20 +4,6 @@ package com.multiple.data.source.constant;
  * data-redis增强模块常用常量
  */
 public interface EnhanceRedisConstants {
-    /**
-     * 常用数字
-     */
-    interface Digital {
-        int NEGATIVE_ONE = -1;
-        int ZERO = 0;
-        int ONE = 1;
-        int TWO = 2;
-        int FOUR = 4;
-        int FIVE = 5;
-        int EIGHT = 8;
-        int TEN = 10;
-        int SIXTEEN = 16;
-    }
 
     /**
      * 多数据源相关常量

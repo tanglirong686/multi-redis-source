@@ -16,10 +16,10 @@ import org.springframework.util.StringUtils;
 
 /**
  * Base Redis connection configuration. 参考：spring-boot-autoconfigure 下的
- * RedisConnectionConfiguration ，参考版本2.4.8
+ * RedisConfiguration ，参考版本2.4.8
  * 因为我们要自己手动的指定db，自己通过这些配置方法生产一个RedisTemplate
  */
-public abstract class RedisConnectionConfiguration {
+public abstract class RedisConfiguration {
 
 	/**
 	 * redis配置properties
@@ -41,8 +41,8 @@ public abstract class RedisConnectionConfiguration {
 	 */
 	private final int database;
 
-	protected RedisConnectionConfiguration(RedisProperties properties, RedisSentinelConfiguration sentinelConfiguration,
-			RedisClusterConfiguration clusterConfiguration, int database) {
+	protected RedisConfiguration(RedisProperties properties, RedisSentinelConfiguration sentinelConfiguration,
+								 RedisClusterConfiguration clusterConfiguration, int database) {
 		this.properties = properties;
 		this.sentinelConfiguration = sentinelConfiguration;
 		this.clusterConfiguration = clusterConfiguration;

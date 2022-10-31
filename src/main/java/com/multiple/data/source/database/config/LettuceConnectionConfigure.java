@@ -24,7 +24,7 @@ import io.lettuce.core.resource.DefaultClientResources;
  * 自定义改造lettuce连接配置
  *
  */
-public class LettuceConnectionConfigure extends RedisConnectionConfiguration {
+public class LettuceConnectionConfigure extends RedisConfiguration {
 
 	/**
 	 * redis配置properties

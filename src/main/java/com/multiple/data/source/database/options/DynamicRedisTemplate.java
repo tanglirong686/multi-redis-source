@@ -1,7 +1,6 @@
 package com.multiple.data.source.database.options;
 
 import com.multiple.data.source.database.config.DynamicRedisTemplateFactory;
-import com.multiple.data.source.database.helper.RedisDatabaseThreadLocalHelper;
 import org.springframework.data.redis.core.RedisTemplate;
 
 public class DynamicRedisTemplate<K, V> extends AbstractRoutingRedisTemplate<K, V> {
@@ -13,11 +12,6 @@ public class DynamicRedisTemplate<K, V> extends AbstractRoutingRedisTemplate<K, 
 
     public DynamicRedisTemplate(DynamicRedisTemplateFactory<K, V> dynamicRedisTemplateFactory) {
         this.dynamicRedisTemplateFactory = dynamicRedisTemplateFactory;
-    }
-
-    @Override
-    protected Object determineCurrentLookupKey() {
-        return RedisDatabaseThreadLocalHelper.get();
     }
 
     /**

@@ -90,7 +90,7 @@ public class DynamicRedisTemplateFactory<K, V> {
                 redisConnectionFactory = jedisConnectionConfigure.redisConnectionFactory();
                 break;
             default:
-                LOGGER.error("unknow redis client type.");
+                LOGGER.error("unknown redis client type.");
         }
         Assert.notNull(redisConnectionFactory, "redisConnectionFactory is null.");
         // 通过Redis连接工厂创建RedisTemplate

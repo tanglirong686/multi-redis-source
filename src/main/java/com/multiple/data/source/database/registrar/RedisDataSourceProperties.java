@@ -55,7 +55,6 @@ public class RedisDataSourceProperties {
      *
      * @param datasourceName 数据源名称
      * @return org.springframework.boot.autoconfigure.data.redis.RedisProperties
-     * @author wenpan 2022/9/24 5:54 下午
      */
     public RedisProperties getRedisProperties(String datasourceName) {
         return datasource.get(datasourceName);

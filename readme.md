@@ -1,3 +1,3 @@
-# multiple-data-source
+# multi-redis-source
 
-多数据源连接查询示例服务
+redis单连接多实例切换示例服务

@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
- * 环境工具
+ * 环境工具类
  *
  */
 public class EnvironmentUtil {

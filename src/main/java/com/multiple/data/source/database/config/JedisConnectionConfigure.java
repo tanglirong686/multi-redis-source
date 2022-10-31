@@ -21,7 +21,7 @@ import java.util.Optional;
  *
  */
 
-public class JedisConnectionConfigure extends RedisConnectionConfiguration {
+public class JedisConnectionConfigure extends RedisConfiguration {
 
 	private final List<JedisClientConfigurationBuilderCustomizer> builderCustomizers;
 

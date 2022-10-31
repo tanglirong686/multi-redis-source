@@ -4,19 +4,21 @@ import com.multiple.data.source.database.helper.ApplicationContextHelper;
 import com.multiple.data.source.database.helper.DynamicRedisHelper;
 import com.multiple.data.source.database.helper.RedisHelper;
 import com.multiple.data.source.database.options.DynamicRedisTemplate;
-import com.multiple.data.source.database.registrar.RedisDataSourceProperties;
 import com.multiple.data.source.database.registrar.StoneRedisProperties;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.boot.autoconfigure.data.redis.JedisClientConfigurationBuilderCustomizer;
 import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
-import org.springframework.data.redis.core.*;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.lang.annotation.*;
@@ -30,11 +32,6 @@ import java.util.Map;
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.data.redis.connection.RedisConnectionFactory"})
 public class RedisAutoConfiguration {
-
-    @Configuration
-    static class ImportMultiSourceAutoConfiguration {
-
-    }
 
     @Bean
     public ApplicationContextHelper applicationContextHelper() {
@@ -127,46 +124,6 @@ public class RedisAutoConfiguration {
         dynamicRedisTemplate.setRedisTemplates(map);
 
         return new DynamicRedisHelper(dynamicRedisTemplate);
-    }
-
-    /**
-     * @return Hash 处理类
-     */
-    @Bean
-    public HashOperations<String, String, String> hashOperations(StringRedisTemplate redisTemplate) {
-        return redisTemplate.opsForHash();
-    }
-
-    /**
-     * @return String 处理类
-     */
-    @Bean
-    public ValueOperations<String, String> valueOperations(StringRedisTemplate redisTemplate) {
-        return redisTemplate.opsForValue();
-    }
-
-    /**
-     * @return List 处理类
-     */
-    @Bean
-    public ListOperations<String, String> listOperations(StringRedisTemplate redisTemplate) {
-        return redisTemplate.opsForList();
-    }
-
-    /**
-     * @return Set 处理类
-     */
-    @Bean
-    public SetOperations<String, String> setOperations(StringRedisTemplate redisTemplate) {
-        return redisTemplate.opsForSet();
-    }
-
-    /**
-     * @return ZSet 处理类
-     */
-    @Bean
-    public ZSetOperations<String, String> zSetOperations(StringRedisTemplate redisTemplate) {
-        return redisTemplate.opsForZSet();
     }
 
     @Documented
